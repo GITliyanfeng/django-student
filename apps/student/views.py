@@ -3,17 +3,34 @@ from student.models import Student
 from student.forms import StudentForm
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.views import View
 
 
 # Create your views here.
+# CBV 方式分离请求
+class IndexView(View):
+    template_name = 'student/index.html'
 
-def index(request):
-    students = Student.objects.all()
-    form = StudentForm()
-    if request.method == 'POST':
+    @staticmethod
+    def get_context():
+        students = Student.objects.all()
+        ctx = {
+            'data': students
+        }
+        return ctx
+
+    def get(self, request):
+        ctx = self.get_context()
+        form = StudentForm()
+        ctx.update({
+            'form': form
+        })
+        return render(request, self.template_name, ctx)
+
+    def post(self, request):
         form = StudentForm(request.POST)
         if form.is_valid():
-            cleaned_data = form.cleaned_data  # 经过验证后的数据
+            cleaned_data = form.cleaned_data
             student = Student()  # 生成一个空的对象
             student.name = cleaned_data['name']
             student.sex = cleaned_data['sex']
@@ -23,5 +40,8 @@ def index(request):
             student.phone = cleaned_data['phone']
             student.save()
             return HttpResponseRedirect(reverse('student:index'))
-    ctx = {'data': students, 'form': form}
-    return render(request, 'student/index.html', ctx)
+        ctx = self.get_context()
+        ctx.update({
+            'form': form
+        })
+        render(request, self.template_name, ctx)

@@ -8,5 +8,5 @@ from django.conf.urls import url
 from student import views as st_views
 
 urlpatterns = [
-    url(r'index$', st_views.index, name='index')
+    url(r'index$', st_views.IndexView.as_view(), name='index')
 ]
