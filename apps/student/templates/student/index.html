@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>学生管理系统</title>
+</head>
+<body>
+<h1>学生管理系统</h1>
+<hr>
+<ul>
+    {% for studert in data %}
+        <li>{{ studert.name }} - {{ studert.get_status_display }}</li>
+    {% endfor %}
+</ul>
+<hr>
+<form action="{% url 'student:index' %}" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="submit">
+</form>
+</body>
+</html>
